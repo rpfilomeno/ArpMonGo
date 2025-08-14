@@ -428,7 +428,9 @@ func main() {
 	go monitor.Start(exePath)
 
 	systray.Run(func() {
-		// Set the icon from ICO file
+
+		systray.SetTitle("ArpMonGo")
+		systray.SetTooltip("ArpMonGo")
 		systray.SetIcon(loadIcon("monitor.ico"))
 
 		mQuit := systray.AddMenuItem("Quit", "Quit the app")
