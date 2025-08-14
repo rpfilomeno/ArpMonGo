@@ -234,7 +234,7 @@ func (lm *LANMonitor) sendDiscordNotification(device Device, isNewDevice bool) e
 		Title:       title,
 		Description: description,
 		Color:       color,
-		Timestamp:   device.LastSeen.Format(time.RFC3339),
+		//Timestamp:   device.LastSeen.Format(time.RFC3339),
 		Fields: []DiscordEmbedField{
 			{Name: "IP Address", Value: device.IPAddress, Inline: true},
 			{Name: "MAC Address", Value: device.MACAddress, Inline: true},
