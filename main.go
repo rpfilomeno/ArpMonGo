@@ -163,11 +163,11 @@ func (lm *LANMonitor) getDeviceByMAC(macAddress string) (*Device, error) {
 			  FROM devices WHERE mac_address = ?`
 
 	var device Device
-	var firstSeen, lastSeen string
+	//var firstSeen, lastSeen string
 
 	err := lm.db.QueryRow(query, macAddress).Scan(
 		&device.ID, &device.IPAddress, &device.MACAddress,
-		&device.Hostname, &firstSeen, &lastSeen, &device.IsActive,
+		&device.Hostname, &device.FirstSeen, &device.LastSeen, &device.IsActive,
 	)
 
 	if err != nil {
@@ -177,8 +177,8 @@ func (lm *LANMonitor) getDeviceByMAC(macAddress string) (*Device, error) {
 		return nil, err
 	}
 
-	device.FirstSeen, _ = time.Parse("2006-01-02 15:04:05", firstSeen)
-	device.LastSeen, _ = time.Parse("2006-01-02 15:04:05", lastSeen)
+	//device.FirstSeen, _ = time.Parse("2006-01-02 15:04:05", firstSeen)
+	//device.LastSeen, _ = time.Parse("2006-01-02 15:04:05", lastSeen)
 
 	return &device, nil
 }
@@ -234,7 +234,7 @@ func (lm *LANMonitor) sendDiscordNotification(device Device, isNewDevice bool) e
 		Title:       title,
 		Description: description,
 		Color:       color,
-		//Timestamp:   device.LastSeen.Format(time.RFC3339),
+		Timestamp:   device.LastSeen.Format(time.RFC3339),
 		Fields: []DiscordEmbedField{
 			{Name: "IP Address", Value: device.IPAddress, Inline: true},
 			{Name: "MAC Address", Value: device.MACAddress, Inline: true},
@@ -340,7 +340,7 @@ func (lm *LANMonitor) scanNetwork(exePath string) error {
 
 			// Send notification if device was previously inactive
 			if !existingDevice.IsActive {
-				log.Printf("Previously inactive device is now active: %s (%s)", device.IPAddress, device.MACAddress)
+				log.Printf("Previously inactive device is now active: %s (%s) first seen %s", device.IPAddress, device.MACAddress, device.FirstSeen.Format("2006-01-02 15:04:05"))
 				if err := lm.sendDiscordNotification(device, false); err != nil {
 					log.Printf("Error sending Discord notification for reactivated device %s: %v", mac, err)
 				}
