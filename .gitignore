@@ -32,3 +32,4 @@ go.work.sum
 # .vscode/
 
 *.db
+arpmongo-v0.1.zip
